@@ -10,7 +10,7 @@ path = 'kleurdetectie/vormpjes.png'
 img = cv2.imread(path)
 imgHSV = cv2.cvtColor(img, COLOR_BGR2HSV)
 
-# cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(0)
 
 
 
@@ -27,7 +27,7 @@ cv2.createTrackbar("Val max", "Trackbars", 255, 255, empty)
 
 
 while True:
-    # ret, img = cap.read()
+    ret, img = cap.read()
     imgHSV = cv2.cvtColor(img, COLOR_BGR2HSV)
     h_min = cv2.getTrackbarPos("Hue min", "Trackbars")
     h_max = cv2.getTrackbarPos("Hue max", "Trackbars")
