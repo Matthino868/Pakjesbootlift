@@ -84,9 +84,12 @@ def getOrientation(pts, img):
 
 # path = './vormpjes.png'
 # img = cv2.imread(path)
-# imgHSV = cv2.cvtColor(img, COLOR_BGR2HSV)
+# imgHSV = cv2.cvtColor(img, COLOR_BGR2HSV
 
-cap = cv2.VideoCapture(1)
+
+#Dit is voor welke webcam je wilt gebruiken; 1 = extern, 0 = intern
+cap = cv2.VideoCapture(0)
+
 
 
 
