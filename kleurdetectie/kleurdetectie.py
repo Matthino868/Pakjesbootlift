@@ -6,7 +6,7 @@ from cv2 import COLOR_BGR2GRAY
 def empty(self):
     pass
 
-path = './vormpjes.png'
+path = 'kleurdetectie/vormpjes.png'
 img = cv2.imread(path)
 imgHSV = cv2.cvtColor(img, COLOR_BGR2HSV)
 

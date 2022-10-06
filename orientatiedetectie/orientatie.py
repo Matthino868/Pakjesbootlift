@@ -102,7 +102,7 @@ cv2.createTrackbar("Val max", "Trackbars", 255, 255, empty)
 
 
 while True: 
-    i = 0;
+    i = 0
     ret, img = cap.read()
     imgHSV = cv2.cvtColor(img, COLOR_BGR2HSV)
     h_min = cv2.getTrackbarPos("Hue min", "Trackbars")
