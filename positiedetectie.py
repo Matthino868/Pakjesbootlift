@@ -34,7 +34,7 @@ cap = cv2.VideoCapture(0)
 cap.set(3,720)
 cap.set(4,480)
 
-color = (0,255,0)
+colorBoot = colorPunt = (0,255,0)
 
 cv2.namedWindow("Trackbars Boot")
 cv2.namedWindow("Trackbars Punt")
@@ -98,38 +98,51 @@ while True:
     contours, hierarchy = cv2.findContours(imgGrayBoot, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     contours1, hierarchy1 = cv2.findContours(imgGrayPunt, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     for i, c in enumerate(contours):
-        for v, b in enumerate(contours1):
+        # for v, b in enumerate(contours1):
         
-            area = cv2.contourArea(c)
-            
-            if area < 200 or 100000 < area:
-                continue
-            area = cv2.contourArea(b)
-            
-            if area < 0 or 100000< area:
-                continue
+        area = cv2.contourArea(c)
+        
+        if area < 200 or 100000 < area:
+            continue
+        
 
-            # print(area)
-            cv2.drawContours(img, contours, -1, (0, 0, 255), 2)
-            cv2.drawContours(img, contours1, -1, (0,255,255),2)
-            meanBoot = getOrientation(c, img)
-            meanPunt = getOrientation(b, img)
+        # print(area)
+        cv2.drawContours(img, contours, -1, (0, 0, 255), 2)
+        meanBoot = getOrientation(c, img)
+        # meanPunt = getOrientation(b, img)
 
-            # try:
-            # print("x: "+ str(meanBoot[0][0])+ " , y: " + str(meanBoot[0][1]))
-            print("x: "+ str(meanPunt[0][0])+ " , y: " + str(meanPunt[0][1]))
-            # except:
-            #     print("foutje")
+        # try:
+        # print("x: "+ str(meanBoot[0][0])+ " , y: " + str(meanBoot[0][1]))
+        # except:
+        #     print("foutje")
+        
+        # x: 326.25 , y: 247.75 
+        if (bootX-bootW//2)<meanBoot[0][0]<(bootX+bootW//2) and (bootY-bootH//2)<meanBoot[0][1]<(bootY+bootH//2):
+            # if (puntX-puntW//2)<meanP
+            colorBoot = 255,0,255
+        else:
+            colorBoot = 0,255,0
+
+    for v,b in enumerate(contours1):
+        area = cv2.contourArea(b)
             
-            # x: 326.25 , y: 247.75 
-            if (bootX-bootW//2)<meanBoot[0][0]<(bootX+bootW//2) and (bootY-bootH//2)<meanBoot[0][1]<(bootY+bootH//2):
-                # if (puntX-puntW//2)<meanP
-                color = 255,0,255
-            else:
-                color = 0,255,0
+        if area < 100 or 100000< area:
+            continue
+        
+        cv2.drawContours(img, contours1, -1, (0,255,255),2)
+        meanPunt = getOrientation(b, img)
 
-    cv2.rectangle(img, (bootX-bootW//2, bootY-bootH//2), (bootX+bootW//2, bootY+bootH//2), color, 5) # Punt
-    cv2.rectangle(img, (puntX-puntW//2, puntY-puntH//2), (puntX+puntW//2, puntY+puntH//2), color, 5) # boot
+        print("x: "+ str(meanPunt[0][0])+ " , y: " + str(meanPunt[0][1]))
+        if (puntX-puntW//2)<meanPunt[0][0]<(puntX+puntW//2) and (puntY-puntH//2)<meanPunt[0][1]<(puntY+puntH//2):
+            # if (puntX-puntW//2)<meanP
+            colorPunt = 255,0,255
+        else:
+            colorPunt = 0,255,0
+
+    
+
+    cv2.rectangle(img, (bootX-bootW//2, bootY-bootH//2), (bootX+bootW//2, bootY+bootH//2), colorBoot, 5) # Punt
+    cv2.rectangle(img, (puntX-puntW//2, puntY-puntH//2), (puntX+puntW//2, puntY+puntH//2), colorPunt, 5) # boot
 
     cv2.imshow("Image", img)
     cv2.imshow("Mask", mask)
