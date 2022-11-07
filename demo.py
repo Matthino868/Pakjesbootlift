@@ -25,14 +25,14 @@ def getOrientation(pts, img):
     return mean
 
 # Uncomment als je een plaatje wil gebruiken
-path = './vormpjes.png'
-img = cv2.imread(path)
+#path = './vormpjes.png'
+#img = cv2.imread(path)
 
 # Uncomment als je de webcam wil gebruiken
-# cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1 1)
 
-# cap.set(3,720)
-# cap.set(4,480)
+cap.set(3,720)
+cap.set(4,480)
 
 colorBoot = colorPunt = (0,255,0)
 
@@ -59,8 +59,8 @@ puntX, puntY, puntW, puntH = 425, 192, 130, 65
 
 while True:
     # Uncomment als je de webcam wil gebruiken
-    # ret, img = cap.read()
-    # img = cv2.flip(img, 1)
+    ret, img = cap.read()
+    img = cv2.flip(img, 1)
 
     imgHSV = cv2.cvtColor(img, COLOR_BGR2HSV)
     h_min = cv2.getTrackbarPos("Hue min", "Trackbars Boot")
