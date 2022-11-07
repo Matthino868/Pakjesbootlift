@@ -29,7 +29,7 @@ def getOrientation(pts, img):
 #img = cv2.imread(path)
 
 # Uncomment als je de webcam wil gebruiken
-cap = cv2.VideoCapture(1 1)
+cap = cv2.VideoCapture(1)
 
 cap.set(3,720)
 cap.set(4,480)

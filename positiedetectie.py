@@ -25,12 +25,11 @@ def getOrientation(pts, img):
     return mean
 
 # Uncomment als je een plaatje wil gebruiken
-# path = './vormpjes.png'
+# path = './kleurdetectie/Testimage.png'
 # img = cv2.imread(path)
 
 # Uncomment als je de webcam wil gebruiken
-cap = cv2.VideoCapture(0)
-
+cap = cv2.VideoCapture(1)
 cap.set(3,720)
 cap.set(4,480)
 
@@ -41,49 +40,57 @@ cv2.namedWindow("Trackbars Punt")
 cv2.resizeWindow("Trackbars Boot",640,240)
 cv2.resizeWindow("Trackbars Punt",640,240)
 
-cv2.createTrackbar("Hue min", "Trackbars Boot", 0, 179, empty)
-cv2.createTrackbar("Hue max", "Trackbars Boot", 179, 179, empty)
-cv2.createTrackbar("Sat min", "Trackbars Boot", 0, 255, empty)
-cv2.createTrackbar("Sat max", "Trackbars Boot", 255, 255, empty)
-cv2.createTrackbar("Val min", "Trackbars Boot", 0, 255, empty)
-cv2.createTrackbar("Val max", "Trackbars Boot", 255, 255, empty)
-cv2.createTrackbar("Hue min", "Trackbars Punt", 0, 179, empty)
-cv2.createTrackbar("Hue max", "Trackbars Punt", 179, 179, empty)
-cv2.createTrackbar("Sat min", "Trackbars Punt", 0, 255, empty)
-cv2.createTrackbar("Sat max", "Trackbars Punt", 255, 255, empty)
-cv2.createTrackbar("Val min", "Trackbars Punt", 0, 255, empty)
-cv2.createTrackbar("Val max", "Trackbars Punt", 255, 255, empty)
+# cv2.createTrackbar("Hue min", "Trackbars Boot", 0, 179, empty)
+# cv2.createTrackbar("Hue max", "Trackbars Boot", 179, 179, empty)
+# cv2.createTrackbar("Sat min", "Trackbars Boot", 0, 255, empty)
+# cv2.createTrackbar("Sat max", "Trackbars Boot", 255, 255, empty)
+# cv2.createTrackbar("Val min", "Trackbars Boot", 0, 255, empty)
+# cv2.createTrackbar("Val max", "Trackbars Boot", 255, 255, empty)
+# cv2.createTrackbar("Hue min", "Trackbars Punt", 0, 179, empty)
+# cv2.createTrackbar("Hue max", "Trackbars Punt", 179, 179, empty)
+# cv2.createTrackbar("Sat min", "Trackbars Punt", 0, 255, empty)
+# cv2.createTrackbar("Sat max", "Trackbars Punt", 255, 255, empty)
+# cv2.createTrackbar("Val min", "Trackbars Punt", 0, 255, empty)
+# cv2.createTrackbar("Val max", "Trackbars Punt", 255, 255, empty)
 
-bootX, bootY, bootW, bootH = 345, 237, 150, 75
-puntX, puntY, puntW, puntH = 425, 192, 130, 65
+# 15 px/cm
+bootX, bootY, bootW, bootH = 590, 390, 150, 95
+puntX, puntY, puntW, puntH = 650, 360, 40, 40
 
+meanBoot = [[297.11020408 , 226.97142857]]
+# meanPunt = [[297.11020408 , 226.97142857]]
 while True:
     # Uncomment als je de webcam wil gebruiken
     ret, img = cap.read()
-    img = cv2.flip(img, 1)
 
+    img = cv2.flip(img, 1)
+    img = cv2.flip(img, 0)
     imgHSV = cv2.cvtColor(img, COLOR_BGR2HSV)
-    h_min = cv2.getTrackbarPos("Hue min", "Trackbars Boot")
-    h_max = cv2.getTrackbarPos("Hue max", "Trackbars Boot")
-    s_max = cv2.getTrackbarPos("Sat max", "Trackbars Boot")
-    s_min = cv2.getTrackbarPos("Sat min", "Trackbars Boot")
-    v_max = cv2.getTrackbarPos("Val max", "Trackbars Boot")
-    v_min = cv2.getTrackbarPos("Val min", "Trackbars Boot")
-    h_max1 = cv2.getTrackbarPos("Hue max", "Trackbars Punt")
-    h_min1 = cv2.getTrackbarPos("Hue min", "Trackbars Punt")
-    s_min1 = cv2.getTrackbarPos("Sat min", "Trackbars Punt")
-    s_max1 = cv2.getTrackbarPos("Sat max", "Trackbars Punt")
-    v_min1 = cv2.getTrackbarPos("Val min", "Trackbars Punt")
-    v_max1 = cv2.getTrackbarPos("Val max", "Trackbars Punt")
+    # h_min = cv2.getTrackbarPos("Hue min", "Trackbars Boot")
+    # h_max = cv2.getTrackbarPos("Hue max", "Trackbars Boot")
+    # s_max = cv2.getTrackbarPos("Sat max", "Trackbars Boot")
+    # s_min = cv2.getTrackbarPos("Sat min", "Trackbars Boot")
+    # v_max = cv2.getTrackbarPos("Val max", "Trackbars Boot")
+    # v_min = cv2.getTrackbarPos("Val min", "Trackbars Boot")
+    # h_max1 = cv2.getTrackbarPos("Hue max", "Trackbars Punt")
+    # h_min1 = cv2.getTrackbarPos("Hue min", "Trackbars Punt")
+    # s_min1 = cv2.getTrackbarPos("Sat min", "Trackbars Punt")
+    # s_max1 = cv2.getTrackbarPos("Sat max", "Trackbars Punt")
+    # v_min1 = cv2.getTrackbarPos("Val min", "Trackbars Punt")
+    # v_max1 = cv2.getTrackbarPos("Val max", "Trackbars Punt")
         
 
-    lower = np.array([h_min,s_min,v_min])
-    upper = np.array([h_max,s_max,v_max])
+    # lower = np.array([h_min,s_min,v_min])
+    # upper = np.array([h_max,s_max,v_max])
+    lower = np.array([24, 105, 152])
+    upper = np.array([60, 255, 255])
     mask = cv2.inRange(imgHSV, lower, upper)
-    mask = cv2.bitwise_not(mask)
+    # mask = cv2.bitwise_not(mask)
 
-    lower1 = np.array([h_min1,s_min1,v_min1])
-    upper1 = np.array([h_max1,s_max1,v_max1])
+    # lower1 = np.array([h_min1,s_min1,v_min1])
+    # upper1 = np.array([h_max1,s_max1,v_max1])
+    lower1 = np.array([91, 134, 0])
+    upper1 = np.array([124, 255, 255])
     mask1 = cv2.inRange(imgHSV, lower1, upper1)
     # mask1 = cv2.bitwise_not(mask1)
 
@@ -97,9 +104,7 @@ while True:
 
     contours, hierarchy = cv2.findContours(imgGrayBoot, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     contours1, hierarchy1 = cv2.findContours(imgGrayPunt, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-    for i, c in enumerate(contours):
-        # for v, b in enumerate(contours1):
-        
+    for i, c in enumerate(contours):     # boot    
         area = cv2.contourArea(c)
         
         if area < 200 or 100000 < area:
@@ -109,21 +114,14 @@ while True:
         # print(area)
         cv2.drawContours(img, contours, -1, (0, 0, 255), 2)
         meanBoot = getOrientation(c, img)
-        # meanPunt = getOrientation(b, img)
+        # print(type(meanBoot[0][0]))
 
-        # try:
-        # print("x: "+ str(meanBoot[0][0])+ " , y: " + str(meanBoot[0][1]))
-        # except:
-        #     print("foutje")
-        
-        # x: 326.25 , y: 247.75 
         if (bootX-bootW//2)<meanBoot[0][0]<(bootX+bootW//2) and (bootY-bootH//2)<meanBoot[0][1]<(bootY+bootH//2):
-            # if (puntX-puntW//2)<meanP
             colorBoot = 255,0,255
         else:
             colorBoot = 0,255,0
 
-    for v,b in enumerate(contours1):
+    for v,b in enumerate(contours1): # punt
         area = cv2.contourArea(b)
             
         if area < 100 or 100000< area:
@@ -132,23 +130,34 @@ while True:
         cv2.drawContours(img, contours1, -1, (0,255,255),2)
         meanPunt = getOrientation(b, img)
 
-        print("x: "+ str(meanPunt[0][0])+ " , y: " + str(meanPunt[0][1]))
+        # print("x: "+ str(meanPunt[0][0])+ " , y: " + str(meanPunt[0][1]))
         if (puntX-puntW//2)<meanPunt[0][0]<(puntX+puntW//2) and (puntY-puntH//2)<meanPunt[0][1]<(puntY+puntH//2):
-            # if (puntX-puntW//2)<meanP
             colorPunt = 255,0,255
         else:
             colorPunt = 0,255,0
 
-    
 
-    cv2.rectangle(img, (bootX-bootW//2, bootY-bootH//2), (bootX+bootW//2, bootY+bootH//2), colorBoot, 5) # Punt
-    cv2.rectangle(img, (puntX-puntW//2, puntY-puntH//2), (puntX+puntW//2, puntY+puntH//2), colorPunt, 5) # boot
+    cv2.rectangle(img, (bootX-bootW//2, bootY-bootH//2), (bootX+bootW//2, bootY+bootH//2), colorBoot, 5) # boot
+    cv2.rectangle(img, (puntX-puntW//2, puntY-puntH//2), (puntX+puntW//2, puntY+puntH//2), colorPunt, 5) # punt
+    cv2.arrowedLine(img, (int(meanBoot[0][0]), int(meanBoot[0][1])), (bootX, bootY), (0,0,255), 5)
+    # horizontaal vector
+    # print(meanBoot)
+    lengte = str(int((bootX-int(meanBoot[0][0]))/15)) + " cm"
+    # (bootX-int(meanBoot[0][0])/2)-
+    cv2.putText(img, lengte, (int(meanBoot[0][0])+int((bootX - int(meanBoot[0][0]))/2), int(meanBoot[0][1])-20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2, cv2.LINE_AA, False)
+    cv2.arrowedLine(img, (int(meanBoot[0][0]), int(meanBoot[0][1])), (bootX, int(meanBoot[0][1])), (0,0,255), 5)
+    # verticaal vector
+    cv2.arrowedLine(img, (int(meanBoot[0][0]), int(meanBoot[0][1])), (int(meanBoot[0][0]), bootY), (0,0,255), 5)
+    # rotatie vector
+    cv2.arrowedLine(img, (int(meanBoot[0][0]), int(meanBoot[0][1])), (int(meanPunt[0][0]), int(meanPunt[0][1])), (0,255,0), 3)
+
+
 
     cv2.imshow("Image", img)
-    cv2.imshow("Mask", mask)
-    cv2.imshow("Mask1", mask1)
-    cv2.imshow("MaskResult", imgResultBoot)
-    cv2.imshow("Grayimage", imgGrayBoot)
+    cv2.imshow("MaskBoot", mask)
+    cv2.imshow("MaskPunt", mask1)
+    # cv2.imshow("MaskResult", imgResultBoot)
+    # cv2.imshow("Grayimage", imgGrayBoot)
 
 
     k = cv2.waitKey(1) & 0xFF

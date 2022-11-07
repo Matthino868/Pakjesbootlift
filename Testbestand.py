@@ -7,3 +7,7 @@ print("Hello arthur")
 print("Hello worl")
 
 #test
+
+import numpy as np
+
+np.
