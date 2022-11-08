@@ -1,11 +1,10 @@
-from bdb import GENERATOR_AND_COROUTINE_FLAGS
 import cv2
-from cv2 import mean
+import math
+import cmath
+# from cv2 import mean
 import numpy as np
 from cv2 import COLOR_BGR2HSV
 from cv2 import COLOR_BGR2GRAY
-
-# from eigendetectie import getOrientation
 
 def empty(self):
     pass
@@ -24,21 +23,42 @@ def getOrientation(pts, img):
     cv2.circle(img, center, 3, (255, 0, 255), 2)
     return mean
 
+def angle_between_points(p1, p2):
+    d1 = p2[0] - p1[0]
+    d2 = p2[1] - p1[1]
+    if d1 == 0:
+        if d2 == 0:  # same points?
+            deg = 0
+        else:
+            deg = 0 if p1[1] > p2[1] else 180
+    elif d2 == 0:
+        deg = 90 if p1[0] < p2[0] else 270
+    else:
+        deg = math.atan(d2 / d1) / math.pi * 180
+        lowering = p1[1] < p2[1]
+        if (lowering and deg < 0) or (not lowering and deg > 0):
+            deg += 270
+        else:
+            deg += 90
+    return deg
+
+
+
 # Uncomment als je een plaatje wil gebruiken
 # path = './kleurdetectie/Testimage.png'
 # img = cv2.imread(path)
 
 # Uncomment als je de webcam wil gebruiken
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 cap.set(3,720)
 cap.set(4,480)
 
 colorBoot = colorPunt = (0,255,0)
 
-cv2.namedWindow("Trackbars Boot")
-cv2.namedWindow("Trackbars Punt")
-cv2.resizeWindow("Trackbars Boot",640,240)
-cv2.resizeWindow("Trackbars Punt",640,240)
+# cv2.namedWindow("Trackbars Boot")
+# cv2.namedWindow("Trackbars Punt")
+# cv2.resizeWindow("Trackbars Boot",640,240)
+# cv2.resizeWindow("Trackbars Punt",640,240)
 
 # cv2.createTrackbar("Hue min", "Trackbars Boot", 0, 179, empty)
 # cv2.createTrackbar("Hue max", "Trackbars Boot", 179, 179, empty)
@@ -57,8 +77,8 @@ cv2.resizeWindow("Trackbars Punt",640,240)
 bootX, bootY, bootW, bootH = 590, 390, 150, 95
 puntX, puntY, puntW, puntH = 650, 360, 40, 40
 
-meanBoot = [[297.11020408 , 226.97142857]]
-# meanPunt = [[297.11020408 , 226.97142857]]
+meanBoot = [[0.00000000 , 0.00000000]]
+meanPunt = [[0.00000000 , 0.00000000]]
 while True:
     # Uncomment als je de webcam wil gebruiken
     ret, img = cap.read()
@@ -110,31 +130,40 @@ while True:
         if area < 200 or 100000 < area:
             continue
         
+        # approx = cv2.approxPolyDP(c, 0.01* cv2.arcLength(c, True), True)
+        # rotated = cv2.minAreaRect(approx)
+        # approx = cv2.boxPoints(c, 0.01* cv2.arcLength(c, True), True)
+        # cv2.drawContours(img, [approx], 0, (0,0,0), 5)
+        # cv2.drawContours(img , rotated, -1, (0,0,0))
+        # x, y, w, h = cv2.boundingRect(approx)
+        # cv2.rectangle(img, ( , ), ( , ), (0,0,0), 5) # boot
+        hull = cv2.convexHull(c, True)
 
-        # print(area)
-        cv2.drawContours(img, contours, -1, (0, 0, 255), 2)
+        cv2.drawContours(img, hull, -1, (255,0,0), 3, 8);
+
+        # cv2.drawContours(img, contours, -1, (0, 0, 255), 2)
         meanBoot = getOrientation(c, img)
-        # print(type(meanBoot[0][0]))
 
         if (bootX-bootW//2)<meanBoot[0][0]<(bootX+bootW//2) and (bootY-bootH//2)<meanBoot[0][1]<(bootY+bootH//2):
-            colorBoot = 255,0,255
+            colorBoot = (255,0,255)
         else:
-            colorBoot = 0,255,0
+            colorBoot = (0,255,0)
 
     for v,b in enumerate(contours1): # punt
         area = cv2.contourArea(b)
             
-        if area < 100 or 100000< area:
+        if area < 100 or 10000< area:
             continue
-        
+
+        #print(area)
         cv2.drawContours(img, contours1, -1, (0,255,255),2)
         meanPunt = getOrientation(b, img)
 
         # print("x: "+ str(meanPunt[0][0])+ " , y: " + str(meanPunt[0][1]))
         if (puntX-puntW//2)<meanPunt[0][0]<(puntX+puntW//2) and (puntY-puntH//2)<meanPunt[0][1]<(puntY+puntH//2):
-            colorPunt = 255,0,255
+            colorPunt = (255,0,255)
         else:
-            colorPunt = 0,255,0
+            colorPunt = (0,255,0)
 
 
     cv2.rectangle(img, (bootX-bootW//2, bootY-bootH//2), (bootX+bootW//2, bootY+bootH//2), colorBoot, 5) # boot
@@ -150,7 +179,20 @@ while True:
     cv2.arrowedLine(img, (int(meanBoot[0][0]), int(meanBoot[0][1])), (int(meanBoot[0][0]), bootY), (0,0,255), 5)
     # rotatie vector
     cv2.arrowedLine(img, (int(meanBoot[0][0]), int(meanBoot[0][1])), (int(meanPunt[0][0]), int(meanPunt[0][1])), (0,255,0), 3)
-
+    
+    # print(angle_between_points(p1, p2))
+    # print()
+    # print(meanBoot[0][0]-meanPunt[0][0])
+    # print(meanBoot[0][1]-meanPunt[0][1])
+    vector1 = np.array([meanBoot[0][0]-meanPunt[0][0], meanBoot[0][1]-meanPunt[0][1]])
+    vector2 = np.array([1,0])
+    a_phase = cmath.phase(complex(int(vector1[0]),int(vector1[1])))
+    b_phase = cmath.phase(complex(1,0))
+    temp = (((b_phase+cmath.pi) - a_phase) * 180 / cmath.pi)-25
+    if(temp>180):
+        temp = temp -360
+    cv2.putText(img, str(int(temp)), (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2, cv2.LINE_AA, False)
+    # print((a_phase - b_phase) * 180 / cmath.pi) 
 
 
     cv2.imshow("Image", img)
