@@ -1,6 +1,7 @@
 import cv2
 import math
 import cmath
+from cv2 import COLOR_GRAY2RGB
 import numpy as np
 from cv2 import COLOR_BGR2HSV
 from cv2 import COLOR_BGR2GRAY
@@ -22,6 +23,29 @@ def getOrientation(pts, img):
     cv2.circle(img, center, 3, (255, 0, 255), 2)
     return mean
 
+def maakTrackbars(naam):
+    cv2.namedWindow(naam)
+    cv2.resizeWindow(naam, 640, 240)
+
+    cv2.createTrackbar("Hue min", naam, 0, 179, empty)
+    cv2.createTrackbar("Hue max", naam, 179, 179, empty)
+    cv2.createTrackbar("Sat min", naam, 0, 255, empty)
+    cv2.createTrackbar("Sat max", naam, 255, 255, empty)
+    cv2.createTrackbar("Val min", naam, 0, 255, empty)
+    cv2.createTrackbar("Val max", naam, 255, 255, empty)
+
+def pakTrackbars(naam):
+    minWaarde = []
+    maxWaarde = []
+
+    minWaarde.append(cv2.getTrackbarPos("Hue min", naam))
+    maxWaarde.append(cv2.getTrackbarPos("Hue max", naam))
+    minWaarde.append(cv2.getTrackbarPos("Sat min", naam))
+    maxWaarde.append(cv2.getTrackbarPos("Sat max", naam))
+    minWaarde.append(cv2.getTrackbarPos("Val min", naam))
+    maxWaarde.append(cv2.getTrackbarPos("Val max", naam))
+    waarde = [minWaarde,maxWaarde]
+    return waarde
 
 # Uncomment als je een plaatje wil gebruiken
 # path = './kleurdetectie/Testimage.png'
@@ -36,77 +60,50 @@ cap.set(4,480)
 
 colorBoot = colorPunt = (0,255,0)
 
-# cv2.namedWindow("Trackbars Boot")
-# cv2.namedWindow("Trackbars Punt")
-# cv2.resizeWindow("Trackbars Boot",640,240)
-# cv2.resizeWindow("Trackbars Punt",640,240)
+# maakTrackbars("Trackbars Boot")
+# maakTrackbars("Trackbars Punt")
 
-# cv2.createTrackbar("Hue min", "Trackbars Boot", 0, 179, empty)
-# cv2.createTrackbar("Hue max", "Trackbars Boot", 179, 179, empty)
-# cv2.createTrackbar("Sat min", "Trackbars Boot", 0, 255, empty)
-# cv2.createTrackbar("Sat max", "Trackbars Boot", 255, 255, empty)
-# cv2.createTrackbar("Val min", "Trackbars Boot", 0, 255, empty)
-# cv2.createTrackbar("Val max", "Trackbars Boot", 255, 255, empty)
-# cv2.createTrackbar("Hue min", "Trackbars Punt", 0, 179, empty)
-# cv2.createTrackbar("Hue max", "Trackbars Punt", 179, 179, empty)
-# cv2.createTrackbar("Sat min", "Trackbars Punt", 0, 255, empty)
-# cv2.createTrackbar("Sat max", "Trackbars Punt", 255, 255, empty)
-# cv2.createTrackbar("Val min", "Trackbars Punt", 0, 255, empty)
-# cv2.createTrackbar("Val max", "Trackbars Punt", 255, 255, empty)
+cv2.namedWindow("Calibratie")
+cv2.resizeWindow("Calibratie", 640, 50)
+cv2.createTrackbar("Kalibratie", "Calibratie", 200, 399, empty)
 
 # 15 px/cm
 bootX, bootY, bootW, bootH = 590, 390, 150, 95
 puntX, puntY, puntW, puntH = 650, 360, 40, 40
 
-meanBoot = [[0.00000000 , 0.00000000]]
-meanPunt = [[0.00000000 , 0.00000000]]
-oudeMeanBoot = meanBoot
+meanBoot = meanPunt = oudeMeanBoot =[[0.00000000 , 0.00000000]]
 # img = cv2.flip(img, 1)
 # img = cv2.flip(img, 0)
 while cap.isOpened():
-    # Uncomment als je de webcam wil gebruiken
     ret, img = cap.read()
     if ret == False:
         continue
     img = cv2.resize(img, (720,480))
 
-    # cv2.imshow("test", img)
-
     imgHSV = cv2.cvtColor(img, COLOR_BGR2HSV)
-    # h_min = cv2.getTrackbarPos("Hue min", "Trackbars Boot")
-    # h_max = cv2.getTrackbarPos("Hue max", "Trackbars Boot")
-    # s_max = cv2.getTrackbarPos("Sat max", "Trackbars Boot")
-    # s_min = cv2.getTrackbarPos("Sat min", "Trackbars Boot")
-    # v_max = cv2.getTrackbarPos("Val max", "Trackbars Boot")
-    # v_min = cv2.getTrackbarPos("Val min", "Trackbars Boot")
-    # h_max1 = cv2.getTrackbarPos("Hue max", "Trackbars Punt")
-    # h_min1 = cv2.getTrackbarPos("Hue min", "Trackbars Punt")
-    # s_min1 = cv2.getTrackbarPos("Sat min", "Trackbars Punt")
-    # s_max1 = cv2.getTrackbarPos("Sat max", "Trackbars Punt")
-    # v_min1 = cv2.getTrackbarPos("Val min", "Trackbars Punt")
-    # v_max1 = cv2.getTrackbarPos("Val max", "Trackbars Punt")
-        
 
-    # lower = np.array([h_min,s_min,v_min])
-    # upper = np.array([h_max,s_max,v_max])
+    # bootWaarde = pakTrackbars("Trackbars Boot")
+    # puntWaarde = pakTrackbars("Trackbars Punt")
+
+    # lower = np.array(bootWaarde[0])
+    # upper = np.array(bootWaarde[1])
     lower = np.array([24, 50, 50])
-    # lower = np.array([24, 105, 152])
     upper = np.array([60, 255, 255])
-    mask = cv2.inRange(imgHSV, lower, upper)
-    # mask = cv2.bitwise_not(mask)
+    bootmask = cv2.inRange(imgHSV, lower, upper)
+    # bootmask = cv2.bitwise_not(bootmask) # gebruik als iets zwart of rood is
 
-    # lower1 = np.array([h_min1,s_min1,v_min1])
-    # upper1 = np.array([h_max1,s_max1,v_max1])
+    # lower1 = np.array(puntWaarde[0])
+    # upper1 = np.array(puntWaarde[1])
     lower1 = np.array([91, 134, 0])
     upper1 = np.array([124, 255, 255])
-    mask1 = cv2.inRange(imgHSV, lower1, upper1)
-    # mask1 = cv2.bitwise_not(mask1)
+    puntmask = cv2.inRange(imgHSV, lower1, upper1)
+    # puntmask = cv2.bitwise_not(puntmask) # gebruik als iets zwart of rood is
 
 
     
-    imgResultBoot = cv2.bitwise_and(img, img, mask = mask)
+    imgResultBoot = cv2.bitwise_and(img, img, mask = bootmask)
     imgGrayBoot = cv2.cvtColor(imgResultBoot, COLOR_BGR2GRAY)
-    imgResultPunt = cv2.bitwise_and(img, img, mask = mask1)
+    imgResultPunt = cv2.bitwise_and(img, img, mask = puntmask)
     imgGrayPunt = cv2.cvtColor(imgResultPunt, COLOR_BGR2GRAY)
 
     hull = []
@@ -117,17 +114,9 @@ while cap.isOpened():
         
         if area < 8000 or 100000 < area:
             continue
-        print(area)
-        # approx = cv2.approxPolyDP(c, 0.01* cv2.arcLength(c, True), True)
-        # rotated = cv2.minAreaRect(approx)
-        # approx = cv2.boxPoints(c, 0.01* cv2.arcLength(c, True), True)
-        # cv2.drawContours(img, [approx], 0, (0,0,0), 5)
-        # cv2.drawContours(img , rotated, -1, (0,0,0))
-        # x, y, w, h = cv2.boundingRect(approx)
-        # cv2.rectangle(img, ( , ), ( , ), (0,0,0), 5) # boot
-        # hull = hull.append(cv2.convexHull(c, True))
+        hull = hull.append(cv2.convexHull(c, True))
 
-        # cv2.drawContours(img, hull, -1, (255,0,0), 3, 8);
+        cv2.drawContours(img, hull, -1, (255,0,0), 3, 8);
 
         cv2.drawContours(img, contours, -1, (0, 0, 255), 2)
         meanBoot = getOrientation(c, img)
@@ -147,20 +136,22 @@ while cap.isOpened():
         cv2.drawContours(img, contours1, -1, (0,255,255),2)
         meanPunt = getOrientation(b, img)
 
-        # print("x: "+ str(meanPunt[0][0])+ " , y: " + str(meanPunt[0][1]))
         if (puntX-puntW//2)<meanPunt[0][0]<(puntX+puntW//2) and (puntY-puntH//2)<meanPunt[0][1]<(puntY+puntH//2):
             colorPunt = (255,0,255)
         else:
             colorPunt = (0,255,0)
     
-    # cv2.drawContours(img, hull, -1, (255,0,0), 3, 8);
-    if meanBoot[0][0] != oudeMeanBoot[0][0]:
+    temp = cv2.getTrackbarPos("Kalibratie", "Calibratie")
+    realScale = 15/(temp+1)
+    cv2.line(img, (50, 450), (50+temp, 450), (255,0,0), 1)
+    if (meanBoot[0][0] != oudeMeanBoot[0][0]):
+
         cv2.rectangle(img, (bootX-bootW//2, bootY-bootH//2), (bootX+bootW//2, bootY+bootH//2), colorBoot, 5) # boot
         cv2.rectangle(img, (puntX-puntW//2, puntY-puntH//2), (puntX+puntW//2, puntY+puntH//2), colorPunt, 5) # punt
-        # cv2.arrowedLine(img, (int(meanBoot[0][0]), int(meanBoot[0][1])), (bootX, bootY), (0,0,255), 5)
+        # cv2.arrowedLine(img, (int(meanBoot[0][0]), int(meanBoot[0][1])), (bootX, bootY), (0,0,255), 5) # pijl van boot naar beste positie
         
         # horizontaal vector
-        lengte = str(int((bootX-int(meanBoot[0][0]))/15)) + " cm"
+        lengte = str(int((bootX-int(meanBoot[0][0]))*realScale)) + " cm"
         cv2.putText(img, lengte, (int(meanBoot[0][0])+int((bootX - int(meanBoot[0][0]))/2), int(meanBoot[0][1])-20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2, cv2.LINE_AA, False)
         cv2.arrowedLine(img, (int(meanBoot[0][0]), int(meanBoot[0][1])), (bootX, int(meanBoot[0][1])), (0,0,255), 5)
         
@@ -169,28 +160,46 @@ while cap.isOpened():
         
         # rotatie vector
         cv2.arrowedLine(img, (int(meanBoot[0][0]), int(meanBoot[0][1])), (int(meanPunt[0][0]), int(meanPunt[0][1])), (0,255,0), 3)
-        
+        pijllengte = math.sqrt(pow(meanBoot[0][0]-meanPunt[0][0], 2) + pow(meanBoot[0][1]-meanPunt[0][1], 2))
+        # print(pijllengte)
         vector1 = np.array([meanBoot[0][0]-meanPunt[0][0], meanBoot[0][1]-meanPunt[0][1]])
         vector2 = np.array([1,0])
         a_phase = cmath.phase(complex(int(vector1[0]),int(vector1[1])))
         b_phase = cmath.phase(complex(1,0))
         temp = (((b_phase+cmath.pi) - a_phase) * 180 / cmath.pi)-25
+
         if(temp>180):
             temp = temp -360
         cv2.putText(img, str(int(temp)), (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2, cv2.LINE_AA, False)
-        # print((a_phase - b_phase) * 180 / cmath.pi) 
 
     oudeMeanBoot = meanBoot
 
-    cv2.imshow("Image", img)
-    # cv2.imshow("MaskBoot", mask)
-    # cv2.imshow("MaskPunt", mask1)
+    bootmask = cv2.cvtColor(bootmask, COLOR_GRAY2RGB)
+    puntmask = cv2.cvtColor(puntmask, COLOR_GRAY2RGB)
+
+    puntmask = cv2.resize(puntmask, (360, 240))
+    bootmask = cv2.resize(bootmask, (360, 240))
+    v1 = np.vstack([img[:240], img[240:]])
+    # 1080*480
+    v2 = np.vstack([bootmask, puntmask])
+    h1 = np.hstack([v1, v2])
+    scale = 1.4
+    h1 = cv2.resize(h1, (int(h1.shape[1]*scale), int(h1.shape[0]*scale)))
+    # print(h1.shape[0])
+
+
+    cv2.imshow("ImageStack", h1)
+
+    # cv2.imshow("Image", img)
+    # cv2.imshow("MaskBoot", bootmask)
+    # cv2.imshow("MaskPunt", puntmask)
     # cv2.imshow("MaskResult", imgResultBoot)
     # cv2.imshow("Grayimage", imgGrayBoot)
 
 
     k = cv2.waitKey(1) & 0xFF
     if k == 27:
+        cap.release()
         cv2.destroyAllWindows()
         break
 cap.release()
