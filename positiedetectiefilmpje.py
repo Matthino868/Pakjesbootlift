@@ -115,11 +115,13 @@ while cap.isOpened():
         
         if area < 8000 or 100000 < area:
             continue
-        hull = hull.append(cv2.convexHull(c, True))
+        hull = cv2.convexHull(c, True)
+        print(hull)
+        # cv2.drawContours(img, [hull], -1, (0,255,255), 3)
 
-        cv2.drawContours(img, hull, -1, (255,0,0), 3, 8);
+        cv2.drawContours(img, hull, -1, (255,0,0), 3);
 
-        cv2.drawContours(img, contours, -1, (0, 0, 255), 2)
+        # cv2.drawContours(img, contours, -1, (0, 0, 255), 2)
         meanBoot = getOrientation(c, img)
 
         if (bootX-bootW//2)<meanBoot[0][0]<(bootX+bootW//2) and (bootY-bootH//2)<meanBoot[0][1]<(bootY+bootH//2):
@@ -145,10 +147,11 @@ while cap.isOpened():
     temp = cv2.getTrackbarPos("Kalibratie", "Calibratie")
     realScale = 15/(temp+1)
     cv2.line(img, (50, 450), (50+temp, 450), (255,0,0), 1)
+    cv2.rectangle(img, (bootX-bootW//2, bootY-bootH//2), (bootX+bootW//2, bootY+bootH//2), colorBoot, 2) # boot
+    cv2.rectangle(img, (puntX-puntW//2, puntY-puntH//2), (puntX+puntW//2, puntY+puntH//2), colorPunt, 2) # punt
+    
     if (meanBoot[0][0] != oudeMeanBoot[0][0]):
 
-        cv2.rectangle(img, (bootX-bootW//2, bootY-bootH//2), (bootX+bootW//2, bootY+bootH//2), colorBoot, 2) # boot
-        cv2.rectangle(img, (puntX-puntW//2, puntY-puntH//2), (puntX+puntW//2, puntY+puntH//2), colorPunt, 2) # punt
         # cv2.arrowedLine(img, (int(meanBoot[0][0]), int(meanBoot[0][1])), (bootX, bootY), (0,0,255), 5) # pijl van boot naar beste positie
         
         # horizontaal vector

@@ -111,6 +111,7 @@ while cap.isOpened():
     hull = []
     contours, hierarchy = cv2.findContours(imgGrayBoot, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     contours1, hierarchy1 = cv2.findContours(imgGrayPunt, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    
     for i, c in enumerate(contours):     # boot    
         area = cv2.contourArea(c)
         
@@ -146,10 +147,10 @@ while cap.isOpened():
     temp = cv2.getTrackbarPos("Kalibratie", "Calibratie")
     realScale = 15/(temp+1)
     cv2.line(img, (50, 450), (50+temp, 450), (255,0,0), 1)
+    cv2.rectangle(img, (bootX-bootW//2, bootY-bootH//2), (bootX+bootW//2, bootY+bootH//2), colorBoot, 2) # boot
+    cv2.rectangle(img, (puntX-puntW//2, puntY-puntH//2), (puntX+puntW//2, puntY+puntH//2), colorPunt, 2) # punt
     if (meanBoot[0][0] != oudeMeanBoot[0][0]):
 
-        cv2.rectangle(img, (bootX-bootW//2, bootY-bootH//2), (bootX+bootW//2, bootY+bootH//2), colorBoot, 2) # boot
-        cv2.rectangle(img, (puntX-puntW//2, puntY-puntH//2), (puntX+puntW//2, puntY+puntH//2), colorPunt, 2) # punt
         # cv2.arrowedLine(img, (int(meanBoot[0][0]), int(meanBoot[0][1])), (bootX, bootY), (0,0,255), 5) # pijl van boot naar beste positie
         
         # horizontaal vector
