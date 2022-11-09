@@ -69,7 +69,8 @@ cv2.createTrackbar("Kalibratie", "Calibratie", 200, 399, empty)
 
 # 15 px/cm
 bootX, bootY, bootW, bootH = 590, 390, 150, 95
-puntX, puntY, puntW, puntH = 650, 360, 40, 40
+puntW, puntH = 40, 40
+puntX, puntY = int(bootX + (bootW/2)-(puntW/2)), int(bootY - (bootH/2)+(puntH/2))
 
 meanBoot = meanPunt = oudeMeanBoot =[[0.00000000 , 0.00000000]]
 # img = cv2.flip(img, 1)
@@ -146,8 +147,8 @@ while cap.isOpened():
     cv2.line(img, (50, 450), (50+temp, 450), (255,0,0), 1)
     if (meanBoot[0][0] != oudeMeanBoot[0][0]):
 
-        cv2.rectangle(img, (bootX-bootW//2, bootY-bootH//2), (bootX+bootW//2, bootY+bootH//2), colorBoot, 5) # boot
-        cv2.rectangle(img, (puntX-puntW//2, puntY-puntH//2), (puntX+puntW//2, puntY+puntH//2), colorPunt, 5) # punt
+        cv2.rectangle(img, (bootX-bootW//2, bootY-bootH//2), (bootX+bootW//2, bootY+bootH//2), colorBoot, 2) # boot
+        cv2.rectangle(img, (puntX-puntW//2, puntY-puntH//2), (puntX+puntW//2, puntY+puntH//2), colorPunt, 2) # punt
         # cv2.arrowedLine(img, (int(meanBoot[0][0]), int(meanBoot[0][1])), (bootX, bootY), (0,0,255), 5) # pijl van boot naar beste positie
         
         # horizontaal vector
