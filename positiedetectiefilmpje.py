@@ -27,7 +27,7 @@ def getOrientation(pts, img):
 # path = './kleurdetectie/Testimage.png'
 # img = cv2.imread(path)
 
-cap = cv2.VideoCapture('testfilmpje.mp4')
+cap = cv2.VideoCapture("C:/Users/arthu/Desktop/testfilmpje.MP4")
 
 # Uncomment als je de webcam wil gebruiken
 # cap = cv2.VideoCapture(0)

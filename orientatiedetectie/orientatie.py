@@ -82,13 +82,12 @@ def getOrientation(pts, img):
 
     return angle
 
-# path = './vormpjes.png'
-# img = cv2.imread(path)
-# imgHSV = cv2.cvtColor(img, COLOR_BGR2HSV
+path = 'C:/Users/arthu/Documents/GitHub/Pakjesbootlift/kleurdetectie/Testimage.png'
+
 
 
 #Dit is voor welke webcam je wilt gebruiken; 1 = extern, 0 = intern
-cap = cv2.VideoCapture(0)
+# cap = cv2.VideoCapture(0)
 
 
 
@@ -105,8 +104,9 @@ cv2.createTrackbar("Val max", "Trackbars", 255, 255, empty)
 
 
 while True: 
-    i = 0
-    ret, img = cap.read()
+    # i = 0
+    # ret, img = cap.read()
+    img = cv2.imread(path)
     imgHSV = cv2.cvtColor(img, COLOR_BGR2HSV)
     h_min = cv2.getTrackbarPos("Hue min", "Trackbars")
     h_max = cv2.getTrackbarPos("Hue max", "Trackbars")
@@ -116,28 +116,28 @@ while True:
     v_max = cv2.getTrackbarPos("Val max", "Trackbars")
     
     
-    print(h_min, h_max, s_min, s_max, v_min, v_max)
+    # print(h_min, s_min, v_min)
+    # print(h_max, s_max, v_max)
 
-    # lower = np.array([h_min,s_min,v_min])
-    # upper = np.array([h_max,s_max,v_max])
+    lower = np.array([h_min,s_min,v_min])
+    upper = np.array([h_max,s_max,v_max])
     # lower = np.array([0,27,220])
     # upper = np.array([50,255,255]) # Rood plaatje google
-    # lower = np.array([90,98,136])
-    # upper = np.array([167,255,255]) # Blauw
+    # lower = np.array([97, 38, 0])
+    # upper = np.array([127, 255, 255]) # Blauw
     # lower = np.array([0,3,4])
     # upper = np.array([8,255,255]) # Rood plaatje
-    lower = np.array([3,126,112])
-    upper = np.array([16,255,176]) # Oranje plaatje
+    # lower = np.array([3,126,112])
+    # upper = np.array([16,255,176]) # Oranje plaatje
     mask = cv2.inRange(imgHSV, lower, upper)
     imgResult = cv2.bitwise_and(img, img, mask = mask)
     imgGray = cv2.cvtColor(imgResult, COLOR_BGR2GRAY)
     imgContour = cv2.Canny(imgGray,50,50)
     contours, hierarchy = cv2.findContours(imgGray, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     for i, c in enumerate(contours):
-        i = i + 1
-        print(i)
         area = cv2.contourArea(c)
-        if area < 3700 or 10000 < area:
+        print(area)
+        if area < 3700 or 100000 < area:
             continue
         cv2.drawContours(imgGray, contours, -1, (0, 0, 255), 2)
         getOrientation(c, img)
