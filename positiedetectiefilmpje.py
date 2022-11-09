@@ -60,6 +60,7 @@ puntX, puntY, puntW, puntH = 650, 360, 40, 40
 
 meanBoot = [[0.00000000 , 0.00000000]]
 meanPunt = [[0.00000000 , 0.00000000]]
+oudeMeanBoot = meanBoot
 # img = cv2.flip(img, 1)
 # img = cv2.flip(img, 0)
 while cap.isOpened():
@@ -152,42 +153,40 @@ while cap.isOpened():
         else:
             colorPunt = (0,255,0)
     
-    cv2.drawContours(img, hull, -1, (255,0,0), 3, 8);
+    # cv2.drawContours(img, hull, -1, (255,0,0), 3, 8);
+    if meanBoot[0][0] != oudeMeanBoot[0][0]:
+        cv2.rectangle(img, (bootX-bootW//2, bootY-bootH//2), (bootX+bootW//2, bootY+bootH//2), colorBoot, 5) # boot
+        cv2.rectangle(img, (puntX-puntW//2, puntY-puntH//2), (puntX+puntW//2, puntY+puntH//2), colorPunt, 5) # punt
+        # cv2.arrowedLine(img, (int(meanBoot[0][0]), int(meanBoot[0][1])), (bootX, bootY), (0,0,255), 5)
+        
+        # horizontaal vector
+        lengte = str(int((bootX-int(meanBoot[0][0]))/15)) + " cm"
+        cv2.putText(img, lengte, (int(meanBoot[0][0])+int((bootX - int(meanBoot[0][0]))/2), int(meanBoot[0][1])-20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2, cv2.LINE_AA, False)
+        cv2.arrowedLine(img, (int(meanBoot[0][0]), int(meanBoot[0][1])), (bootX, int(meanBoot[0][1])), (0,0,255), 5)
+        
+        # verticaal vector
+        cv2.arrowedLine(img, (int(meanBoot[0][0]), int(meanBoot[0][1])), (int(meanBoot[0][0]), bootY), (0,0,255), 5)
+        
+        # rotatie vector
+        cv2.arrowedLine(img, (int(meanBoot[0][0]), int(meanBoot[0][1])), (int(meanPunt[0][0]), int(meanPunt[0][1])), (0,255,0), 3)
+        
+        vector1 = np.array([meanBoot[0][0]-meanPunt[0][0], meanBoot[0][1]-meanPunt[0][1]])
+        vector2 = np.array([1,0])
+        a_phase = cmath.phase(complex(int(vector1[0]),int(vector1[1])))
+        b_phase = cmath.phase(complex(1,0))
+        temp = (((b_phase+cmath.pi) - a_phase) * 180 / cmath.pi)-25
+        if(temp>180):
+            temp = temp -360
+        cv2.putText(img, str(int(temp)), (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2, cv2.LINE_AA, False)
+        # print((a_phase - b_phase) * 180 / cmath.pi) 
 
-    cv2.rectangle(img, (bootX-bootW//2, bootY-bootH//2), (bootX+bootW//2, bootY+bootH//2), colorBoot, 5) # boot
-    cv2.rectangle(img, (puntX-puntW//2, puntY-puntH//2), (puntX+puntW//2, puntY+puntH//2), colorPunt, 5) # punt
-    cv2.arrowedLine(img, (int(meanBoot[0][0]), int(meanBoot[0][1])), (bootX, bootY), (0,0,255), 5)
-    # horizontaal vector
-    # print(meanBoot)
-    lengte = str(int((bootX-int(meanBoot[0][0]))/15)) + " cm"
-    # (bootX-int(meanBoot[0][0])/2)-
-    cv2.putText(img, lengte, (int(meanBoot[0][0])+int((bootX - int(meanBoot[0][0]))/2), int(meanBoot[0][1])-20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2, cv2.LINE_AA, False)
-    cv2.arrowedLine(img, (int(meanBoot[0][0]), int(meanBoot[0][1])), (bootX, int(meanBoot[0][1])), (0,0,255), 5)
-    # verticaal vector
-    cv2.arrowedLine(img, (int(meanBoot[0][0]), int(meanBoot[0][1])), (int(meanBoot[0][0]), bootY), (0,0,255), 5)
-    # rotatie vector
-    cv2.arrowedLine(img, (int(meanBoot[0][0]), int(meanBoot[0][1])), (int(meanPunt[0][0]), int(meanPunt[0][1])), (0,255,0), 3)
-    
-    # print(angle_between_points(p1, p2))
-    # print()
-    # print(meanBoot[0][0]-meanPunt[0][0])
-    # print(meanBoot[0][1]-meanPunt[0][1])
-    vector1 = np.array([meanBoot[0][0]-meanPunt[0][0], meanBoot[0][1]-meanPunt[0][1]])
-    vector2 = np.array([1,0])
-    a_phase = cmath.phase(complex(int(vector1[0]),int(vector1[1])))
-    b_phase = cmath.phase(complex(1,0))
-    temp = (((b_phase+cmath.pi) - a_phase) * 180 / cmath.pi)-25
-    if(temp>180):
-        temp = temp -360
-    cv2.putText(img, str(int(temp)), (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2, cv2.LINE_AA, False)
-    # print((a_phase - b_phase) * 180 / cmath.pi) 
-
+    oudeMeanBoot = meanBoot
 
     cv2.imshow("Image", img)
-    cv2.imshow("MaskBoot", mask)
-    cv2.imshow("MaskPunt", mask1)
-    cv2.imshow("MaskResult", imgResultBoot)
-    cv2.imshow("Grayimage", imgGrayBoot)
+    # cv2.imshow("MaskBoot", mask)
+    # cv2.imshow("MaskPunt", mask1)
+    # cv2.imshow("MaskResult", imgResultBoot)
+    # cv2.imshow("Grayimage", imgGrayBoot)
 
 
     k = cv2.waitKey(1) & 0xFF
