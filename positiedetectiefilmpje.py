@@ -183,10 +183,10 @@ while cap.isOpened():
 
     puntmask = cv2.resize(puntmask, (360, 240))
     bootmask = cv2.resize(bootmask, (360, 240))
-    v1 = np.vstack([img[:240], img[240:]])
+    # v1 = np.vstack([img[:240], img[240:]])
     # 1080*480
     v2 = np.vstack([bootmask, puntmask])
-    h1 = np.hstack([v1, v2])
+    h1 = np.hstack([img, v2])
     scale = 1.4
     h1 = cv2.resize(h1, (int(h1.shape[1]*scale), int(h1.shape[0]*scale)))
     # print(h1.shape[0])
