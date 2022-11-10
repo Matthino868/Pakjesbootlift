@@ -116,12 +116,12 @@ while cap.isOpened():
         if area < 8000 or 100000 < area:
             continue
         hull = cv2.convexHull(c, True)
-        print(hull)
+        # print(hull)
         # cv2.drawContours(img, [hull], -1, (0,255,255), 3)
 
-        cv2.drawContours(img, hull, -1, (255,0,0), 3);
+        # cv2.drawContours(img, hull, -1, (255,0,0), 3);
 
-        # cv2.drawContours(img, contours, -1, (0, 0, 255), 2)
+        cv2.drawContours(img, contours, -1, (0, 0, 255), 2)
         meanBoot = getOrientation(c, img)
 
         if (bootX-bootW//2)<meanBoot[0][0]<(bootX+bootW//2) and (bootY-bootH//2)<meanBoot[0][1]<(bootY+bootH//2):
