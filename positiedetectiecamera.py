@@ -60,8 +60,8 @@ cap.set(4,480)
 
 colorBoot = colorPunt = (0,255,0)
 
-# maakTrackbars("Trackbars Boot")
-# maakTrackbars("Trackbars Punt")
+maakTrackbars("Trackbars Boot")
+maakTrackbars("Trackbars Punt")
 
 cv2.namedWindow("Calibratie")
 cv2.resizeWindow("Calibratie", 640, 50)
@@ -84,20 +84,20 @@ while cap.isOpened():
 
     imgHSV = cv2.cvtColor(img, COLOR_BGR2HSV)
 
-    # bootWaarde = pakTrackbars("Trackbars Boot")
-    # puntWaarde = pakTrackbars("Trackbars Punt")
+    bootWaarde = pakTrackbars("Trackbars Boot")
+    puntWaarde = pakTrackbars("Trackbars Punt")
 
-    # lower = np.array(bootWaarde[0])
-    # upper = np.array(bootWaarde[1])
-    lower = np.array([24, 50, 50])
-    upper = np.array([60, 255, 255])
+    lower = np.array(bootWaarde[0])
+    upper = np.array(bootWaarde[1])
+    # lower = np.array([24, 50, 50])
+    # upper = np.array([60, 255, 255])
     bootmask = cv2.inRange(imgHSV, lower, upper)
     # bootmask = cv2.bitwise_not(bootmask) # gebruik als iets zwart of rood is
 
-    # lower1 = np.array(puntWaarde[0])
-    # upper1 = np.array(puntWaarde[1])
-    lower1 = np.array([91, 134, 0])
-    upper1 = np.array([124, 255, 255])
+    lower1 = np.array(puntWaarde[0])
+    upper1 = np.array(puntWaarde[1])
+    # lower1 = np.array([91, 134, 0])
+    # upper1 = np.array([124, 255, 255])
     puntmask = cv2.inRange(imgHSV, lower1, upper1)
     # puntmask = cv2.bitwise_not(puntmask) # gebruik als iets zwart of rood is
 
@@ -108,7 +108,7 @@ while cap.isOpened():
     imgResultPunt = cv2.bitwise_and(img, img, mask = puntmask)
     imgGrayPunt = cv2.cvtColor(imgResultPunt, COLOR_BGR2GRAY)
 
-    hull = []
+    # hull = []
     contours, hierarchy = cv2.findContours(imgGrayBoot, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     contours1, hierarchy1 = cv2.findContours(imgGrayPunt, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     
@@ -117,9 +117,9 @@ while cap.isOpened():
         
         if area < 8000 or 100000 < area:
             continue
-        hull = hull.append(cv2.convexHull(c, True))
+        # hull = hull.append(cv2.convexHull(c, True))
 
-        cv2.drawContours(img, hull, -1, (255,0,0), 3, 8);
+        # cv2.drawContours(img, hull, -1, (255,0,0), 3, 8);
 
         cv2.drawContours(img, contours, -1, (0, 0, 255), 2)
         meanBoot = getOrientation(c, img)
