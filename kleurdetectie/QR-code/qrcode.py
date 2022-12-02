@@ -44,10 +44,10 @@ while True:
     
     k = cv2.waitKey(1) & 0xFF
     if k == 27:
-        cap.release()
+        #cap.release()
         cv2.destroyAllWindows()
         break
-cap.release()
+#cap.release()
 cv2.destroyAllWindows()
 
 # det=cv2.QRCodeDetector()

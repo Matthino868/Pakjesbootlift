@@ -25,7 +25,7 @@ print(type(qr.bounds))
 bounds = qr.bounds.convert_tuple()
 print(bounds)
 
-cv2.rectangle(img, (int(bounds[0][0]),int(bounds[0][1])), (int(bounds[2][0]),int(bounds[2][1])), (255,0,0), 2) # punt
+cv2.rectangle(img, (int(bounds[0][0]),int(bounds[0][1])), (int(bounds[2][0]),int(bounds[2][1])), (255,0,0), 5) # punt
 
 
 img = cv2.resize(img,(720,720))
