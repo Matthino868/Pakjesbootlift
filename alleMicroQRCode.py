@@ -2,7 +2,7 @@
 # from PIL import Image
 
 # # read in image file containing the QR code
-# im = Image.open('C:/Users/Melle/python/MircoQR.png')
+# im = Image.open("C:/Users/arthu/Pictures/QRcodes/DeltaQR.png")
 
 # # create a qr code reader object
 # qr = qrcode.QRCode()
@@ -16,24 +16,26 @@
 
 
 
-# import cv2
-# from pyzbar import decode
+import cv2
+from pyzbar.pyzbar import decode 
 
-# image = cv2.imread('C:/Users/Melle/python/MircoQR.png')
+image = cv2.imread('C:/Users/arthu/Pictures/QRcodes/DeltaQR.png')
 
-# codes = pyzbar.decode(image)
+codes = decode(image)
 
-# microQR_codes = []
-# for code in codes:
-#     if code.type == "QRCODE" and code.data_type == "microQR":
-#         microQR_codes.append(code)
+print(codes)
 
-# if microQR_codes:
-#     print("MicroQR codes detected:")
-#     for code in microQR_codes:
-#         print(code.data)
-# else:
-#     print("No microQR codes detected.")
+microQR_codes = []
+for code in codes:
+    if code.type == "QRCODE" and code.data_type == "microQR":
+        microQR_codes.append(code)
+
+if microQR_codes:
+    print("MicroQR codes detected:")
+    for code in microQR_codes:
+        print(code.data)
+else:
+    print("No microQR codes detected.")
 
 
 
