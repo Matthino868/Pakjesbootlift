@@ -1,31 +1,35 @@
 import cv2
-img=cv2.imread("C:/Users/arthu/Pictures/QRcodes/eigenqr3.png")
-# cap = cv2.VideoCapture("C:/Users/arthu/Downloads/Instructievideo.mp4")
-# cap = cv2.VideoCapture(1)
+import numpy as np
+#img=cv2.imread("C:/Users/arthu/Pictures/QRcodes/eigenqr3.png")
+cap = cv2.VideoCapture("C:/Users/schre/Downloads/testfilmpje_qr_code.mp4")
+#cap = cv2.VideoCapture(1)
 
-# cap.set(3,1280)
-# cap.set(4,720)
+#cap.set(3,1280)
+#cap.set(4,720)
 
-# while cap.isOpened():
+#while cap.isOpened():
 while True:
-    # ret, img = cap.read()
-    # if ret == False:
-    #     continue
-    img=cv2.imread("C:/Users/arthu/Pictures/QRcodes/eigenqr3.png")
+    ret, img = cap.read()
+    if ret == False:
+        continue
+    #img=cv2.imread("C:/Users/arthu/Pictures/QRcodes/eigenqr3.png")
 
-    # img = cv2.resize(img, (720,720))
+    img = cv2.resize(img, (720,720))
     # print(points)
     det=cv2.QRCodeDetector()
     retval, decoded_info, points, straight_qrcode = det.detectAndDecodeMulti(img)
-    # print(points)
+
     if retval:
-        print(decoded_info)
+        #print(decoded_info)
         # print(straight_qrcode)
         for idlijst, i in enumerate(points):
-            print(i)
+            # print(i)
+            a = np.array(i, np.int32)
             # print(i[0])
             cv2.putText(img, decoded_info[idlijst], (int(i[0][0]),int(i[0][1])), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2, cv2.LINE_AA, False)
-            cv2.rectangle(img, (int(i[0][0]),int(i[0][1])), (int(i[2][0]),int(i[2][1])), (255,0,0), 2) # punt
+            #cv2.rectangle(img, (int(i[0][0]),int(i[0][1])), (int(i[2][0]),int(i[2][1])), (255,0,0), 2) # punt
+            cv2.polylines(img, [a], True,(0,255,255),5)
+        
                 
         # print(points[0][3])
         # print(points[0][0][0])

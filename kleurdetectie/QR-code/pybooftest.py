@@ -3,16 +3,16 @@ import pyboof as pb
 import cv2
 
 # Detects all the QR Codes in the image and prints their message and location
-data_path = "C:/Users/arthu/Pictures/QRcodes/eigenqr2.png"
+# data_path = "C:/Users/arthu/Pictures/QRcodes/eigenqr2.png"
 # img = cv2.imread("C:/Users/arthu/Pictures/QRcodes/eigenqr2.png")
 
 
 detector = pb.FactoryFiducial(np.uint8).microqr()
 
-# detector = pb1.QrCodeDetector()
+#detector = pb.QrCodeDetector()
 
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 while cap.isOpened():
     ret, img = cap.read()
     if ret == False:
