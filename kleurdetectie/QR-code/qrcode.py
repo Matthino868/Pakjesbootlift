@@ -1,20 +1,37 @@
+import time
 import cv2
 import numpy as np
-#img=cv2.imread("C:/Users/arthu/Pictures/QRcodes/eigenqr3.png")
-cap = cv2.VideoCapture("C:/Users/schre/Downloads/testfilmpje_qr_code.mp4")
-#cap = cv2.VideoCapture(1)
+# img=cv2.imread("C:/Users/arthu/Pictures/QRcodes/eigenqr3.png")
+cap = cv2.VideoCapture("C:/Users/arthu/Desktop/qrcodetestfilmpje.MP4")
+# cap = cv2.VideoCapture(0)
 
-#cap.set(3,1280)
-#cap.set(4,720)
+# cap.set(3,720)
+# cap.set(4,720)
+# cap.set(cv2.CAP_PROP_FRAME_WIDTH, 100)
+# cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 400)
 
-#while cap.isOpened():
+prev_frame_time = 0 
+new_frame_time = 0
+
+# while cap.isOpened():
 while True:
     ret, img = cap.read()
     if ret == False:
         continue
-    #img=cv2.imread("C:/Users/arthu/Pictures/QRcodes/eigenqr3.png")
+    # img=cv2.imread("C:/Users/arthu/Pictures/QRcodes/eigenqr3.png")
+    new_frame_time = time.time()
+    fps = 1/(new_frame_time-prev_frame_time)
+    prev_frame_time = new_frame_time
+    fps = str(int(fps))
+    print(fps)
 
-    img = cv2.resize(img, (720,720))
+    kernel = np.array([[0, -1, 0],
+                   [-1, 5,-1],
+                   [0, -1, 0]])
+    image_sharp = cv2.filter2D(src=img, ddepth=-1, kernel=kernel)
+    img = image_sharp
+
+    img = cv2.resize(img, (720,480))
     # print(points)
     det=cv2.QRCodeDetector()
     retval, decoded_info, points, straight_qrcode = det.detectAndDecodeMulti(img)
@@ -27,7 +44,7 @@ while True:
             a = np.array(i, np.int32)
             # print(i[0])
             cv2.putText(img, decoded_info[idlijst], (int(i[0][0]),int(i[0][1])), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2, cv2.LINE_AA, False)
-            #cv2.rectangle(img, (int(i[0][0]),int(i[0][1])), (int(i[2][0]),int(i[2][1])), (255,0,0), 2) # punt
+            # cv2.rectangle(img, (int(i[0][0]),int(i[0][1])), (int(i[2][0]),int(i[2][1])), (255,0,0), 2) # punt
             cv2.polylines(img, [a], True,(0,255,255),5)
         
                 
@@ -44,7 +61,10 @@ while True:
             # cv2.rectangle(img, (int(points[0][0][0]),int(points[0][0][1])), (int(points[0][2][0]),int(points[0][2][1])), (255,0,0), 2) # punt
 
             # cv2.circle(img, (int(i[0]), int(i[1])), 3, (255, 0, 255), 5)
-
+    cv2.putText(img, fps, (210, 80), cv2.FONT_HERSHEY_SIMPLEX, 3, (100, 255, 0), 3, cv2.LINE_AA)
+    img = cv2.resize(img, (720,480))
+    image_sharp = cv2.resize(image_sharp, (720,480))
+    cv2.imshow('AV CV- Winter Wonder Sharpened', image_sharp)
     cv2.imshow("Image", img)
     
     k = cv2.waitKey(1) & 0xFF
