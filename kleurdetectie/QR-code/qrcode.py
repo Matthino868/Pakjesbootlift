@@ -2,9 +2,9 @@ import time
 import cv2
 import numpy as np
 # img=cv2.imread("C:/Users/arthu/Pictures/QRcodes/AlphaQR.png")
-cap = cv2.VideoCapture("C:/Users/arthu/Desktop/qrcodetestfilmpje.MP4")
-# cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter.fourcc('m','j','p','g'))
-# cap = cv2.VideoCapture(0)
+# cap = cv2.VideoCapture("C:/Users/arthu/Desktop/qrcodetestfilmpje.MP4")
+cap = cv2.VideoCapture(0)
+cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter.fourcc('m','p','4','v'))
 
 # cap.set(3,720)
 # cap.set(4,720)
@@ -15,16 +15,7 @@ prev_frame_time = 0
 new_frame_time = 0
 ret, img = cap.read()
 
-# sizeX = img.shape[1]
-# sizeY = img.shape[0]
 
-# print(int(sizeX-(sizeX*0.20)), int(sizeY-(sizeY*0.20)))
-
-# bootX, bootY, bootW, bootH = int(sizeX-(sizeX*0.20)), int(sizeY-(sizeY*0.20)), int(sizeX*0.2), int(sizeY*0.2)
-# puntW, puntH = 40, 40
-# puntX, puntY = int(bootX + (bootW/2)-(puntW/2)), int(bootY - (bootH/2)+(puntH/2))
-
-# print(dir(cap.get))
 
 # while cap.isOpened():
 while True:
