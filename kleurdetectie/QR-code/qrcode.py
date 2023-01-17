@@ -2,8 +2,8 @@ import time
 import cv2
 import numpy as np
 # img=cv2.imread("C:/Users/arthu/Pictures/QRcodes/AlphaQR.png")
-# cap = cv2.VideoCapture("C:/Users/arthu/Desktop/qrcodetestfilmpje.MP4")
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture("C:/Users/arthu/Desktop/qrcodetestfilmpje.MP4")
+# cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter.fourcc('m','p','4','v'))
 
 # cap.set(3,720)
