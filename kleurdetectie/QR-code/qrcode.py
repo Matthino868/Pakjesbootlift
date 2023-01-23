@@ -5,7 +5,7 @@ import numpy as np
 print("Stream wordt geopend!")
 # cap = cv2.VideoCapture("C:/school/Vakken/Project56/demofilmpjeFinal.MP4")
 cap = cv2.VideoCapture(1)
-
+first_time = True
 prev_frame_time = 0 
 new_frame_time = 0
 ret, img = cap.read()
@@ -40,6 +40,9 @@ while cap.isOpened():
     bootX = 950
     bootY = 450
     if retval:
+        if first_time:
+            print("De last mile carrier komt eraan!")
+            first_time = False
         for idlijst, i in enumerate(points):
             naam = decoded_info[idlijst].strip()
             a = np.array(i, np.int32)
