@@ -41,7 +41,7 @@ while cap.isOpened():
     bootY = 450
     if retval:
         if first_time:
-            print("De last mile carrier komt eraan!")
+            print("De last mile carrier krijgt een bericht!")
             first_time = False
         for idlijst, i in enumerate(points):
             naam = decoded_info[idlijst].strip()
