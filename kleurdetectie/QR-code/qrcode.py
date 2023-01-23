@@ -1,79 +1,83 @@
+import cmath
 import time
 import cv2
 import numpy as np
-# img=cv2.imread("C:/Users/arthu/Pictures/QRcodes/AlphaQR.png")
-cap = cv2.VideoCapture("C:/Users/arthu/Desktop/qrcodetestfilmpje.MP4")
-# cap = cv2.VideoCapture(0)
-cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter.fourcc('m','p','4','v'))
-
-# cap.set(3,720)
-# cap.set(4,720)
-# cap.set(cv2.CAP_PROP_FRAME_WIDTH, 100)
-# cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 400)
+print("Stream wordt geopend!")
+# cap = cv2.VideoCapture("C:/school/Vakken/Project56/demofilmpjeFinal.MP4")
+cap = cv2.VideoCapture(1)
 
 prev_frame_time = 0 
 new_frame_time = 0
 ret, img = cap.read()
 
+def angle_between(v1, v2):
+    v1_u = v1 / np.linalg.norm(v1)
+    v2_u = v2 / np.linalg.norm(v2)
+    return np.arccos(np.clip(np.dot(v1_u, v2_u), -1.0, 1.0))
 
-
-# while cap.isOpened():
-while True:
-    ret, img = cap.read()
-    if ret == False:
-        continue
-    # img=cv2.imread("C:/Users/arthu/Pictures/QRcodes/eigenqr3.png")
+def fps_counter():
+    global prev_frame_time
+    global new_frame_time
     new_frame_time = time.time()
     fps = 1/(new_frame_time-prev_frame_time)
     prev_frame_time = new_frame_time
-    fps = str(int(fps))
-    # print(img.shape, fps)
+    return str(int(fps))
 
-    # kernel = np.array([[0, -1, 0],
-    #                [-1, 5,-1],
-    #                [0, -1, 0]])
-    # image_sharp = cv2.filter2D(src=img, ddepth=-1, kernel=kernel)
-    # img = image_sharp
-
+while cap.isOpened():
+# while True:
+    ret, img = cap.read()
+    if ret == False:
+        continue
     img = cv2.resize(img, (1280,720))
-    # img = cv2.resize(img, (720,480))
-    # det=cv2.QRCodeDetector()
+    fps = fps_counter()
+
     retval, decoded_info, points, straight_qrcode = cv2.QRCodeDetector().detectAndDecodeMulti(img)
-
+    x0, y0 = 1, 1
+    x1, y1 = 0, 0
+    kleur = (0,255,0)
+    bootW = 150
+    bootH = 150
+    bootX = 950
+    bootY = 450
     if retval:
-        # linksboven
-        # cv2.circle(img, (int(points[0][0][0]), int(points[0][0][1])), 3, (255, 0, 255), 5)
-        # rechtsboven
-        # cv2.circle(img, (int(points[0][1][0]), int(points[0][1][1])), 3, (0, 0, 255), 5)
-        # rechtsonder
-        # cv2.circle(img, (int(points[0][2][0]), int(points[0][2][1])), 3, (255, 0, 0), 5)
-        # linksonder
-        # cv2.circle(img, (int(points[0][3][0]), int(points[0][3][1])), 3, (255, 255, 0), 5)
-
         for idlijst, i in enumerate(points):
+            naam = decoded_info[idlijst].strip()
             a = np.array(i, np.int32)
-            cv2.putText(img, decoded_info[idlijst], (int(i[0][0]),int(i[0][1])), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2, cv2.LINE_AA, False)
+            cv2.putText(img, naam, (int(i[0][0]),int(i[0][1])), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2, cv2.LINE_AA, False)
             cv2.polylines(img, [a], True,(0,255,255),5)
+            
+            if naam == "Beta":
+                x0 = int((i[2][0]-i[0][0])//2 + i[0][0])
+                y0 = int((i[2][1]-i[0][1])//2 + i[0][1])
+                x1 = int((i[1][0]-i[0][0])//2 + i[0][0])
+                y1 = int((i[1][1]-i[0][1])//2 + i[0][1])
 
-            x0 = int((i[2][0]-i[0][0])//2 + i[0][0])
-            y0 = int((i[2][1]-i[0][1])//2 + i[0][1])
-            x1 = int((i[1][0]-i[0][0])//2 + i[0][0])
-            y1 = int((i[1][1]-i[0][1])//2 + i[0][1])
+                vector1 = np.array([x1-x0, y1-y0])
+                vector2 = np.array([1,0])
+                cv2.arrowedLine(img, (x0,y0), (x1,y1), (0,0,255), 5)
+                hoek = np.degrees(angle_between(vector1,vector2))
+                cv2.putText(img, str(int(hoek)), (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2, cv2.LINE_AA, False)
+                if abs(bootX-x0) < 50 and abs(bootY-y0) < 50 and hoek < 10:
+                    kleur = (255,0,255)
 
-            cv2.arrowedLine(img, (x0,y0), (x1,y1), (0,0,255), 5)
+                # Horizontale lijn
+                horLengte = bootX - x0
+                horPositie = x0 + (horLengte//2)
+                cv2.putText(img, str(int(horLengte/25))+ " cm", (horPositie, y0 - 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2, cv2.LINE_AA, False)
+                cv2.arrowedLine(img, (x0, y0),(bootX, y0),(0,255,255),2)
+                # Verticale lijn
+                verLengte = bootY-y0
+                verPositie = y0 + (verLengte//2)
+                cv2.putText(img, str(int(verLengte/25))+ " cm", (x0 + 30, verPositie), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2, cv2.LINE_AA, False)
+                cv2.arrowedLine(img, (x0, y0),(x0, bootY),(0,255,255),2)
 
-    img = cv2.resize(img, (720,480))
     cv2.putText(img, fps, (210, 80), cv2.FONT_HERSHEY_SIMPLEX, 3, (100, 255, 0), 3, cv2.LINE_AA)
-    sizeX = img.shape[1]
-    sizeY = img.shape[0]
+        
+    cv2.rectangle(img, (600,275),(1200,375),kleur,2)
+    cv2.rectangle(img, (600,525),(1200,625),kleur,2)
+    cv2.rectangle(img, (bootX-bootW//2, bootY-bootH//2), (bootX+bootW//2, bootY+bootH//2), kleur, 2) # boot
 
-    # print(int(sizeX-(sizeX*0.20)), int(sizeY-(sizeY*0.20)))
-
-    bootX, bootY, bootW, bootH = int(sizeX-(sizeX*0.20)), int(sizeY-(sizeY*0.20)), int(sizeX*0.2), int(sizeY*0.2)
-    cv2.rectangle(img, (bootX-bootW//2, bootY-bootH//2), (bootX+bootW//2, bootY+bootH//2), (0,255,0), 2) # boot
-    
-    # image_sharp = cv2.resize(image_sharp, (720,480))
-    # cv2.imshow('AV CV- Winter Wonder Sharpened', image_sharp)
+    # img = cv2.resize(img, (720,480))
     cv2.imshow("Image", img)
     
     k = cv2.waitKey(1) & 0xFF
@@ -81,30 +85,5 @@ while True:
         #cap.release()
         cv2.destroyAllWindows()
         break
-#cap.release()
+cap.release()
 cv2.destroyAllWindows()
-
-# det=cv2.QRCodeDetector()
-# retval, decoded_info, points, straight_qrcode = det.detectAndDecodeMulti(img)
-# print(retval)
-# print(decoded_info)
-# print(points)
-
-# for i in points[0]:
-#     # print(type(i))
-#     # print(i[0])
-#     # x, y = i[0] , i[1]
-#     # print(x,  y)
-#     cv2.circle(img, (int(i[0]), int(i[1])), 3, (255, 0, 255), 5)
-    
-
-
-# cv2.imshow("image", img)
-# k = cv2.waitKey(10000) & 0xFF
-# # if k == 27:
-# #     cap.release()
-# #     cv2.destroyAllWindows()
-# #     break
-# # cap.release()
-# cv2.destroyAllWindows()
-# # print(straight_qrcode)
