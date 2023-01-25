@@ -46,7 +46,7 @@ while cap.isOpened():
         for idlijst, i in enumerate(points):
             naam = decoded_info[idlijst].strip()
             a = np.array(i, np.int32)
-            cv2.putText(img, naam, (int(i[0][0]),int(i[0][1])), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2, cv2.LINE_AA, False)
+            cv2.putText(img, naam, (int(i[0][0]),int(i[0][1])- 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2, cv2.LINE_AA, False)
             cv2.polylines(img, [a], True,(0,255,255),5)
             
             if naam == "Beta":
@@ -74,7 +74,7 @@ while cap.isOpened():
                 cv2.putText(img, str(int(verLengte/25))+ " cm", (x0 + 30, verPositie), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2, cv2.LINE_AA, False)
                 cv2.arrowedLine(img, (x0, y0),(x0, bootY),(0,255,255),2)
 
-    cv2.putText(img, fps, (210, 80), cv2.FONT_HERSHEY_SIMPLEX, 3, (100, 255, 0), 3, cv2.LINE_AA)
+    # cv2.putText(img, fps, (210, 80), cv2.FONT_HERSHEY_SIMPLEX, 3, (100, 255, 0), 3, cv2.LINE_AA)
         
     cv2.rectangle(img, (600,275),(1200,375),kleur,2)
     cv2.rectangle(img, (600,525),(1200,625),kleur,2)
